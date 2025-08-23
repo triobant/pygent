@@ -1,5 +1,19 @@
 import os
 
+schema_get_file_content = types.FunctionDeclaration(
+    name="write_file",
+    description="Write to specified file",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "directory": types.Schema(
+                type=types.Type.STRING,
+                description="TEST2",
+            ),
+        },
+    ),
+)
+
 def write_file(working_directory, file_path, content):
     abs_working_dir = os.path.abspath(working_directory)
     abs_file_path = os.path.abspath(os.path.join(working_directory, file_path))
