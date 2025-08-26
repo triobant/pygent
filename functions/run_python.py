@@ -7,9 +7,16 @@ schema_get_files_info = types.FunctionDeclaration(
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={
-            "directory": types.Schema(
+            "file_path": types.Schema(
                 type=types.Type.STRING,
-                description="TEST1",
+                description="The path to the python file location to execute it",
+            ),
+            "args": types.Schema(
+                type=types.Type.LIST,
+                items=types.Schema(
+                    type=types.Type.STRING,
+                ),
+                description="A list of arguments to supply the executed python file with",
             ),
         },
     ),
