@@ -1,7 +1,8 @@
 import os
 import subprocess
+from google.genai import types
 
-schema_get_files_info = types.FunctionDeclaration(
+schema_run_python_file = types.FunctionDeclaration(
     name="run_python_file",
     description="Runs specified python file",
     parameters=types.Schema(
@@ -12,7 +13,7 @@ schema_get_files_info = types.FunctionDeclaration(
                 description="The path to the python file location to execute it",
             ),
             "args": types.Schema(
-                type=types.Type.LIST,
+                type=types.Type.ARRAY,
                 items=types.Schema(
                     type=types.Type.STRING,
                 ),
