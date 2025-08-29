@@ -5,6 +5,7 @@ from google.genai import types
 from dotenv import load_dotenv
 from prompts import system_prompt
 from functions.get_files_info import schema_get_files_info,available_functions
+from functions.call_function import call_function
 
 def main():
     load_dotenv()
@@ -51,8 +52,16 @@ def generate_content(client, messages, verbose):
         print(response.text)
     else:
         for function_call_part in response.function_calls:
-            print("Response:")
-            print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+            function_call_result = call_function(function_call_part, verbose=verbose)
+            if (
+                not function_call_result.parts
+                or not getattr(function_call_result.parts[0], "function_response", None)
+                or not hasattr(function_call_result.parts[0].function_response, "response")
+            ):
+                raise RuntimeError("Invalid tool response from call_function")
+
+            if verbose:
+                print(f"-> {function_call_result.parts[0].function_response.response}")
 
 if __name__ == "__main__":
     main()
