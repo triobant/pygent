@@ -12,9 +12,9 @@ def main():
 
     verbose = "--verbose" in sys.argv
     args = sys.argv[1:]
-    for arg in sys.argv[1:]:
-        if not arg.startswith("--"):
-            args.append(arg)
+    #for arg in sys.argv[1:]:
+    #    if not arg.startswith("--"):
+    #        args.append(arg)
 
     if not args:
         print("AI Code Assistant")
