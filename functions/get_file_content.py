@@ -26,10 +26,10 @@ def get_file_content(working_directory, file_path):
     try:
         with open(abs_file_path, "r") as f:
             file_content_string = f.read(MAX_CHARS)
-            if os.path.getsize(abs_file_path) > MAX_CHARS:
-                file_content_string += (
-                    f'[...File "{file_path}" truncated at {MAX_CHARS} characters]'
-                )
-                return file_content_string
+        if os.path.getsize(abs_file_path) > MAX_CHARS:
+            file_content_string += (
+                f'[...File "{file_path}" truncated at {MAX_CHARS} characters]'
+            )
+        return file_content_string
     except Exception as e:
         return f'Error: could not open and read file "{file_path}": "{e}"'
