@@ -6,10 +6,11 @@ from functions.run_python import run_python_file
 from functions.write_file import write_file
 
 def call_function(function_call_part, verbose=False):
+    function_name = function_call_part.name
     if verbose:
-        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+        print(f"Calling function: {function_name}({function_call_part.args})")
     else:
-        print(f" - Calling function: {function_call_part.name}")
+        print(f" - Calling function: {function_name}")
 
     operations = {
         'get_files_info': get_files_info,
@@ -18,27 +19,28 @@ def call_function(function_call_part, verbose=False):
         'write_file': write_file,
     }
 
-    if function_call_part.name not in operations:
+    fn = operations.get(function_name)
+    if not fn:
         return types.Content(
             role="tool",
             parts=[
                 types.Part.from_function_response(
-                name=function_call_part.name,
-                    response={"error": f"Unknown function: {function_call_part.name}"},
+                name=function_name,
+                    response={"error": f"Unknown function: {function_name}"},
                 )
             ],
         )
-    else:
-        function_call_part.args["working_directory"] = "./calculator"
-        function_result = operations[function_call_part.name](**function_call_part.args)
+    kwargs = dict(function_call_part.args or {})
+    kwargs["working_directory"] = "./calculator"
+    result = fn(**kwargs)
 
-        return types.Content(
-            role="tool",
-            parts=[
-                types.Part.from_function_response(
-                    name=function_call_part.name,
-                    response={"result": function_result},
-                )
-            ],
-        )
+    return types.Content(
+        role="tool",
+        parts=[
+            types.Part.from_function_response(
+                name=function_name,
+                response={"result": result},
+            )
+        ],
+    )
     
