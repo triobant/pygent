@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from prompts import system_prompt
 from functions.get_files_info import schema_get_files_info,available_functions
 from functions.call_function import call_function
+from config import MAX_ITERS
 
 def main():
     load_dotenv()
