@@ -61,22 +61,31 @@ def generate_content(client, messages, verbose):
     if verbose:
         print("Prompt tokens:", response.usage_metadata.prompt_token_count)
         print("Response tokens:", response.usage_metadata.candidates_token_count)
-    
-    if not response.function_calls:
-        print("Response:")
-        print(response.text)
-    else:
-        for function_call_part in response.function_calls:
-            function_call_result = call_function(function_call_part, verbose=verbose)
-            if (
-                not function_call_result.parts
-                or not getattr(function_call_result.parts[0], "function_response", None)
-                or not hasattr(function_call_result.parts[0].function_response, "response")
-            ):
-                raise RuntimeError("Invalid tool response from call_function")
 
-            if verbose:
-                print(f"-> {function_call_result.parts[0].function_response.response}")
+    if response.candidates:
+        for candidate in response.candidates:
+            function_call_content = candidate.content
+            messages.append(function_call_content)
+
+    if not response.function_calls:
+        return response.text
+        
+    for function_call_part in response.function_calls:
+        function_call_result = call_function(function_call_part, verbose=verbose)
+        if (
+            not function_call_result.parts
+            or not function_call_result.parts[0].function_response
+        ):
+            raise Exception("empty function call result")
+
+        if verbose:
+            print(f"-> {function_call_result.parts[0].function_response.response}")
+        function_responses.append(function_call_result.parts[0])
+
+    if not function_responses:
+        raise Exception("no function responses generated, exiting.")
+
+    messages.append(types.Content(role="user", parts=function_responses))
 
 if __name__ == "__main__":
     main()
